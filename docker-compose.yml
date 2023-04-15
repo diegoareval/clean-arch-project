@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  mongo:
+    container_name: mongo-container
+    image: mongo
+    command: mongod --quiet --logpath /dev/null
+    volumes:
+      - ./docker-volumes:/data/db
+    ports:
+      - '27017:27017'
+
+  api:
+    container_name: api-container
+    image: node:16
+    working_dir: /usr/app
+    command: bash -c "npm i -q && npm run start"
+    volumes:
+      - ./dist/:/usr/app/dist/
+      - ./package.json:/usr/app/package.json
+    ports:
+      - '3000:3000'
+      - '9222:9222'
+    depends_on:
+      - mongo
